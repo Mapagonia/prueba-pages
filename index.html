@@ -86,7 +86,7 @@
                 }
 
                 // --- MAGIA DE OPENLAYERS ---
-                
+                console.log("Datos recibidos de Supabase:", data);
                 // 1. Instanciamos el lector de GeoJSON
                 var formatoGeoJSON = new ol.format.GeoJSON();
                 
@@ -94,7 +94,7 @@
                 // OpenLayers necesita saber que la base de datos está en 4326 (WGS84) 
                 // y el mapa web en 3857 (Web Mercator)
                 var nuevasFeatures = formatoGeoJSON.readFeatures(data, {
-                    dataProjection: 'EPSG:4326', 
+                    dataProjection: 'EPSG:22182', 
                     featureProjection: 'EPSG:3857'
                 });
 
