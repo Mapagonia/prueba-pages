@@ -83,10 +83,7 @@
                 // 2. Leemos los datos que llegaron de Supabase y los proyectamos
                 // OpenLayers necesita saber que la base de datos está en 4326 (WGS84) 
                 // y el mapa web en 3857 (Web Mercator)
-                var nuevasFeatures = formatoGeoJSON.readFeatures(data, {
-                    dataProjection: 'EPSG:4326', 
-                    featureProjection: 'EPSG:4326'
-                });
+                var nuevasFeatures = formatoGeoJSON.readFeatures(data);
 
                 // 3. Limpiamos la "bolsa" original (por si acaso) y metemos los puntos nuevos
                 jsonSource_punto_test_1.clear();
