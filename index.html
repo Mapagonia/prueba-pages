@@ -85,7 +85,7 @@
                 // y el mapa web en 3857 (Web Mercator)
                 var nuevasFeatures = formatoGeoJSON.readFeatures(data, {
                     dataProjection: 'EPSG:22182', 
-                    featureProjection: 'EPSG:22182'
+                    featureProjection: 'EPSG:4326'
                 });
 
                 // 3. Limpiamos la "bolsa" original (por si acaso) y metemos los puntos nuevos
