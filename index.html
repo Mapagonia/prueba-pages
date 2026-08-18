@@ -56,6 +56,7 @@
             // Declaramos el GeoJSON vacío para que qgis2web no colapse
             var json_punto_test_1 = { "type": "FeatureCollection", "features": [] };
         </script>
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
         <script src="resources/qgis2web_expressions.js"></script>
         <script src="./resources/functions.js"></script>
         <script src="./resources/ol.js"></script>
@@ -72,6 +73,7 @@
                 const supabaseUrl = 'https://emmthnrletlglxomcgbs.supabase.co';
                 const supabaseKey = 'sb_publishable_CHcG6hJYhsxWtECZKxN8cQ_aSu1mksw';
                 const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+                console.log("Supabase inicializado correctamente.");
 
                 // Asumimos que tenés una tabla llamada 'puntos_territorio' 
                 // y una función RPC 'obtener_geojson_tabla' que devuelve los datos.
