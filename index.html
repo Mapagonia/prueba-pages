@@ -11,6 +11,7 @@
         <link href="resources/photon-geocoder-autocomplete.min.css" rel="stylesheet">
         <link rel="stylesheet" href="./resources/ol-layerswitcher.css">
         <link rel="stylesheet" href="./resources/qgis2web.css">
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
         <style>
         html, body {
             background-color: #def1ff;
@@ -56,7 +57,7 @@
             // Declaramos el GeoJSON vacío para que qgis2web no colapse
             var json_punto_test_1 = { "type": "FeatureCollection", "features": [] };
         </script>
-        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        
         <script src="resources/qgis2web_expressions.js"></script>
         <script src="./resources/functions.js"></script>
         <script src="./resources/ol.js"></script>
@@ -68,16 +69,16 @@
         <script src="./resources/Autolinker.min.js"></script>
         <script src="./resources/qgis2web.js"></script>  
         <script>
-            window.addEventListener('load', async function() {
+            window.addEventListener('DOMContentLoaded', async function() {
                 // Inicializar Supabase
                 const supabaseUrl = 'https://emmthnrletlglxomcgbs.supabase.co';
                 const supabaseKey = 'sb_publishable_CHcG6hJYhsxWtECZKxN8cQ_aSu1mksw';
-                const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+                const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
                 console.log("Supabase inicializado correctamente.");
 
                 // Asumimos que tenés una tabla llamada 'puntos_territorio' 
                 // y una función RPC 'obtener_geojson_tabla' que devuelve los datos.
-                const { data, error } = await supabase
+                const { data, error } = await supabaseClient
                     .rpc('obtener_geojson_tabla', { nombre_tabla: 'punto_test' });
 
                 if (error) {
