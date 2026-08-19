@@ -39,6 +39,7 @@
             // Declaramos el GeoJSON vacío para engañar a qgis2web
             var json_Poligono_1 = { "type": "FeatureCollection", "features": [] };
 
+
             // --- 2. CÓDIGO ORIGINAL DE QGIS2WEB ---
             var map = L.map('map', {
                 zoomControl:false, maxZoom:28, minZoom:1
@@ -186,6 +187,36 @@
             setBounds();
 
 
+            // B. Creás el panel para controlar qué capa va arriba de otra (z-index)
+            map.createPane('pane_NuevaCapa_2');
+            map.getPane('pane_NuevaCapa_2').style.zIndex = 402; // Un nivel más alto que la 401
+            map.getPane('pane_NuevaCapa_2').style['mix-blend-mode'] = 'normal';
+
+            function estiloMisPoligonos() {
+                    return {
+                        color: "#ffffff",      // Color del borde (blanco)
+                        weight: 2,             // Grosor del borde en píxeles
+                        dashArray: "5, 5",     // (Opcional) Borde punteado
+                        fillColor: "#27ae60",  // Color de relleno (verde)
+                        fillOpacity: 0.6       // Transparencia del relleno (0 invisible, 1 sólido)
+                    };
+                }
+            
+            // C. Armás el recipiente vacío usando el PopUp y el Estilo que te copiaste de QGIS
+            var layer_NuevaCapa_2 = new L.geoJson(layer_NuevaCapa_2, {
+                attribution: '',
+                interactive: true,
+                dataVar: 'json_NuevaCapa_2',
+                layerName: 'layer_NuevaCapa_2',
+                pane: 'pane_NuevaCapa_2',
+                style: estiloMisPoligonos, // Usamos la función de estilo que definimos antes   
+            });
+
+            // D. La agregás al mapa
+            bounds_group.addLayer(layer_NuevaCapa_2);
+            map.addLayer(layer_NuevaCapa_2);
+
+
             // --- 3. INYECCIÓN DE SUPABASE ---
             // Este bloque hace la magia: pide los datos reales y los mete en el recipiente
             document.addEventListener("DOMContentLoaded", async function() {
@@ -197,17 +228,26 @@
 
                 // 2. Llamar a la función RPC de PostGIS que armamos antes
                 // Reemplazá 'nombre_de_tu_tabla_poligonos' por el nombre real de la tabla
-                const { data, error } = await supabaseClient
-                    .rpc('obtener_geojson_tabla', { nombre_tabla: 'punto_test' });
+                const peticiones = [
+                    // Petición 1: Tu capa original
+                    supabaseClient.rpc('obtener_geojson_tabla', { nombre_tabla: 'punto_test' }),
+                    
+                    // Petición 2: Tu capa nueva
+                    supabaseClient.rpc('obtener_geojson_tabla', { nombre_tabla: 'Poligono' }) 
+                ];
 
-                if (error) {
-                    console.error("Error al traer datos de Supabase:", error);
-                    return;
-                }
-
+                // Esperamos a que la base de datos devuelva todo
+                const resultados = await Promise.all(peticiones);
+                
                 // 3. Limpiar la capa recipiente y cargar el GeoJSON real
                 layer_Poligono_1.clearLayers();
-                layer_Poligono_1.addData(data);
+                layer_Poligono_1.addData(resultados[0].data);
+                if (!resultados[1].error) {
+                    layer_NuevaCapa_2.clearLayers();
+                    layer_NuevaCapa_2.addData(resultados[1].data);
+                } else {
+                    console.error("Error capa 2:", resultados[1].error);
+                }
                 
                 // Opcional: Centrar el mapa para que abarque todos los polígonos recién cargados
                 map.fitBounds(layer_Poligono_1.getBounds());
